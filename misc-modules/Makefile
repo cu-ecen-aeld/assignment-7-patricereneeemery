@@ -1,4 +1,3 @@
-
 # To build modules outside of the kernel tree, we run "make"
 # in the kernel source tree; the Makefile these then includes this
 # Makefile once again.
@@ -19,18 +18,19 @@ ifeq ($(KERNELRELEASE),)
 modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
 
-modules_install:
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules_install
-
 clean:
-	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions *.mod modules.order *.symvers
+	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions *.mod \
+	modules.order *.symvers
 
-.PHONY: modules modules_install clean
+install:
+	install -m 644 faulty.ko $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/extra/
+	install -m 644 hello.ko $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/extra/
+
+.PHONY: modules clean install
 
 else
     # called from kernel build system: just declare what our modules are
     obj-m := hello.o hellop.o seq.o jiq.o sleepy.o complete.o \
              silly.o faulty.o kdatasize.o kdataalign.o jit.o
 endif
-
 
