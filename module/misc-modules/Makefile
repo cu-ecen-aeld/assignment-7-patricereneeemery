@@ -4,7 +4,7 @@
 # This conditional selects whether we are being included from the
 # kernel Makefile or not.
 
-LDDINC=$(PWD)/../../include
+LDDINC=$(M)/../../include
 EXTRA_CFLAGS += -I$(LDDINC)
 
 ifeq ($(KERNELRELEASE),)
@@ -29,8 +29,11 @@ install:
 .PHONY: modules clean install
 
 else
-    # called from kernel build system: just declare what our modules are
+	EXTRA_CFLAGS += -I$(src)/../../include
+	# called from kernel build system: just declare what our modules are
 	obj-m := hello.o hellop.o seq.o jiq.o sleepy.o complete.o \
 		silly.o faulty.o kdatasize.o kdataalign.o jit.o
 endif
+
+
 
