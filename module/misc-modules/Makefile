@@ -4,16 +4,16 @@
 # This conditional selects whether we are being included from the
 # kernel Makefile or not.
 
-LDDINC=$(PWD)/../include
+LDDINC=$(PWD)/../../include
 EXTRA_CFLAGS += -I$(LDDINC)
 
 ifeq ($(KERNELRELEASE),)
 
-    # Assume the source tree is where the running kernel was built
-    # You should set KERNELDIR in the environment if it's elsewhere
-    KERNELDIR ?= /lib/modules/$(shell uname -r)/build
-    # The current directory is passed to sub-makes as argument
-    PWD := $(shell pwd)
+# Assume the source tree is where the running kernel was built
+# You should set KERNELDIR in the environment if it's elsewhere
+KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+# The current directory is passed to sub-makes as argument
+PWD := $(shell pwd)
 
 modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
@@ -30,7 +30,7 @@ install:
 
 else
     # called from kernel build system: just declare what our modules are
-    obj-m := hello.o hellop.o seq.o jiq.o sleepy.o complete.o \
-             silly.o faulty.o kdatasize.o kdataalign.o jit.o
+	obj-m := hello.o hellop.o seq.o jiq.o sleepy.o complete.o \
+		silly.o faulty.o kdatasize.o kdataalign.o jit.o
 endif
 
