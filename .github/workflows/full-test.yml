@@ -1,1 +1,18 @@
-initial create of workflow
+name: full-test
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    tags:
+      - 'assignment-*'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run full-test
+        run: ./full-test.sh
