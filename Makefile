@@ -1,5 +1,5 @@
-obj-m += module/misc-modules/
-obj-m += module/scull/
+obj-m += misc-modules/
+obj-m += scull/
 
 module/misc-modules-y := hello.o faulty.o
 
