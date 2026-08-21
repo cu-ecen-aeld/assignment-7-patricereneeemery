@@ -6,6 +6,7 @@ Session.vim
 # make file
 .*
 !.gitignore
+!.github/
 *~
 *.o
 core
