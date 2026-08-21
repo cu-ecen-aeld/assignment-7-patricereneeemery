@@ -10,8 +10,13 @@
 #include <linux/fs.h>
 #include <linux/seq_file.h>
 #include <linux/slab.h>
+#include <linux/version.h>
 
-#include "proc_ops_version.h"
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,0)
+#define USE_PROC_OPS
+#endif
+
+//#include "proc_ops_version.h"
 
 MODULE_AUTHOR("Jonathan Corbet");
 MODULE_LICENSE("Dual BSD/GPL");
@@ -86,6 +91,22 @@ static const struct file_operations ct_file_ops = {
 	.release = seq_release
 };
 
+#ifdef USE_PROC_OPS
+static const struct proc_ops ct_proc_ops = {
+        .proc_open    = ct_open,
+        .proc_read    = seq_read,
+        .proc_lseek   = seq_lseek,
+        .proc_release = seq_release,
+};
+#else
+static const struct file_operations ct_proc_ops = {
+        .owner   = THIS_MODULE,
+        .open    = ct_open,
+        .read    = seq_read,
+        .llseek  = seq_lseek,
+        .release = seq_release,
+};
+#endif
 
 /*
  * Module setup and teardown.
@@ -93,14 +114,14 @@ static const struct file_operations ct_file_ops = {
 
 static int ct_init(void)
 {
-	struct proc_dir_entry *entry;
+        struct proc_dir_entry *entry;
 
-	entry = proc_create("sequence", 0, NULL,
-	    proc_ops_wrapper(&ct_file_ops, ct_file_pops));
-	if (!entry)
-		return -ENOMEM;
-	return 0;
+        entry = proc_create("sequence", 0, NULL, &ct_proc_ops);
+        if (!entry)
+                return -ENOMEM;
+        return 0;
 }
+
 
 static void ct_exit(void)
 {
