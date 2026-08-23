@@ -29,7 +29,7 @@
 #include <linux/preempt.h>
 #include <linux/interrupt.h> /* tasklets */
 
-#include "proc_ops_version.h"
+//#include "proc_ops_version.h"
 MODULE_LICENSE("Dual BSD/GPL");
 
 /*
