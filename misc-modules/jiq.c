@@ -155,6 +155,13 @@ static const struct file_operations jiq_read_wq_fops = {
         .release        = single_release,
 };
 
+static const struct proc_ops jiq_read_wq_pops = {
+        .proc_open      = jiq_read_wq_open,
+        .proc_read      = seq_read,
+        .proc_lseek     = seq_lseek,
+        .proc_release   = single_release,
+};
+
 static int jiq_read_wq_delayed_show(struct seq_file *m, void *v)
 {
         DEFINE_WAIT(wait);
@@ -182,6 +189,13 @@ static const struct file_operations jiq_read_wq_delayed_fops = {
         .read           = seq_read,
         .llseek         = seq_lseek,
         .release        = single_release,
+};
+
+static const struct proc_ops jiq_read_wq_delayed_pops = {
+        .proc_open      = jiq_read_wq_delayed_open,
+        .proc_read      = seq_read,
+        .proc_lseek     = seq_lseek,
+        .proc_release   = single_release,
 };
 
 /*
@@ -218,13 +232,21 @@ static const struct file_operations jiq_read_tasklet_fops = {
         .release        = single_release,
 };
 
+static const struct proc_ops jiq_read_tasklet_pops = {
+        .proc_open      = jiq_read_tasklet_open,
+        .proc_read      = seq_read,
+        .proc_lseek     = seq_lseek,
+        .proc_release   = single_release,
+};
+
 /*
  * This one, instead, tests out the timers.
  */
 
 static void jiq_timedout(struct timer_list *t)
 {
-        struct clientdata *data = from_timer(data, t, jiq_timer);
+        struct clientdata *data =
+                container_of(t, struct clientdata, jiq_timer);
         jiq_print(data);            /* print a line */
         wake_up_interruptible(&jiq_wait);  /* awake the process */
 }
@@ -241,7 +263,7 @@ static int jiq_read_run_timer_show(struct seq_file *m, void *v)
         jiq_print(&jiq_data);   /* print and go to sleep */
         add_timer(&jiq_data.jiq_timer);
         wait_event_interruptible(jiq_wait, 0); /* RACE */
-        del_timer_sync(&jiq_data.jiq_timer);  /* in case a signal woke us up */
+        del_timer(&jiq_data.jiq_timer);  /* in case a signal woke us up */
 
         return 0;
 }
@@ -258,6 +280,13 @@ static const struct file_operations jiq_read_run_timer_fops = {
         .release        = single_release,
 };
 
+static const struct proc_ops jiq_read_run_timer_pops = {
+        .proc_open      = jiq_read_run_timer_open,
+        .proc_read      = seq_read,
+        .proc_lseek     = seq_lseek,
+        .proc_release   = single_release,
+};
+
 /*
  * the init/clean material
  */
@@ -269,10 +298,10 @@ static int jiq_init(void)
         tasklet_init(&jiq_data.jiq_tasklet, jiq_print_tasklet,
             (unsigned long)&jiq_data);
 
-        proc_create("jiqwq", 0, NULL, &jiq_read_wq_fops);
-        proc_create("jiqwqdelay", 0, NULL, &jiq_read_wq_delayed_fops);
-        proc_create("jitimer", 0, NULL, &jiq_read_run_timer_fops);
-        proc_create("jiqtasklet", 0, NULL, &jiq_read_tasklet_fops);
+        proc_create("jiqwq", 0, NULL, &jiq_read_wq_pops);
+        proc_create("jiqwqdelay", 0, NULL, &jiq_read_wq_delayed_pops);
+        proc_create("jitimer", 0, NULL, &jiq_read_run_timer_pops);
+        proc_create("jiqtasklet", 0, NULL, &jiq_read_tasklet_pops);
 
         return 0; /* succeed */
 }
