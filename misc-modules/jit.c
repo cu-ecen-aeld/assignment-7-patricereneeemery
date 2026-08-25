@@ -33,7 +33,7 @@
 #include <linux/version.h>
 #include <asm/hardirq.h>
 
-#include "proc_ops_version.h"
+//#include "proc_ops_version.h"
 /*
  * This module is a silly one: it only embeds short code fragments
  * that show how time delays can be handled in the kernel.
