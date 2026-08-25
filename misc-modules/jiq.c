@@ -263,7 +263,7 @@ static int jiq_read_run_timer_show(struct seq_file *m, void *v)
         jiq_print(&jiq_data);   /* print and go to sleep */
         add_timer(&jiq_data.jiq_timer);
         wait_event_interruptible(jiq_wait, 0); /* RACE */
-        del_timer(&jiq_data.jiq_timer);  /* in case a signal woke us up */
+        del_timer_sync(&jiq_data.jiq_timer);  /* in case a signal woke us up */
 
         return 0;
 }
