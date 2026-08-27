@@ -1,3 +1,4 @@
+obj-m :=
 obj-m += misc-modules/
 obj-m += scull/
 
