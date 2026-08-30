@@ -1,11 +1,10 @@
 # Comment/uncomment the following line to disable/enable debugging
 #DEBUG = y
 
-# Add your debugging flag (or not) to CFLAGS
 ifeq ($(DEBUG),y)
-  DEBFLAGS = -O -g -DSCULL_DEBUG
+	DEBFLAGS = -O -g -DSCULL_DEBUG
 else
-  DEBFLAGS = -O2
+	DEBFLAGS = -O2
 endif
 
 LDDINC=$(PWD)/../include
@@ -16,8 +15,11 @@ EXTRA_CFLAGS += -I$(LDDINC)
 ifneq ($(KERNELRELEASE),)
 # Called from kernel build system
 
-scull-objs := main.o pipe.o access.o
-obj-m      := scull.o
+# obj-m += scull.o
+obj-m += scullpipe.o
+
+scull-objs := main.o
+scullpipe-objs := pipe.o
 
 else
 
@@ -29,12 +31,13 @@ modules:
 
 install:
 	install -m 644 scull.ko $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/extra/
+	install -m 644 scullpipe.ko $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/extra/
 
 endif
 
 clean:
 	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions *.mod \
-	       modules.order *.symvers
+		modules.order *.symvers
 
 depend .depend dep:
 	$(CC) $(EXTRA_CFLAGS) -M *.c > .depend
