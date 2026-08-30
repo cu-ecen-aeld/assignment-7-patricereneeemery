@@ -18,7 +18,7 @@ ifneq ($(KERNELRELEASE),)
 obj-m += scull.o
 obj-m += scullpipe.o
 
-scull-objs := scull_module.o
+scull-objs := scull.o
 scullpipe-objs := pipe.o
 
 
